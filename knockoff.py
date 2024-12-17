@@ -21,7 +21,7 @@ def main():
     
     parser.add_argument('--window_size', default=16, type=int, 
                         help='window size (mnist,fashion,cifar10:16, flower17:32, cifar100:256)')
-    parser.add_argument('--defense', default=True, type=float, help='use D-ADD defense')
+    parser.add_argument('--defense', default=False, type=float, help='use D-ADD defense')
     # different model weights may have slightly different threshold
     parser.add_argument('--threshold', default=11.6, type=float,
                         help='distance threshold for D-ADD defense (2247, 650, 11.6, 82.37, 14.85 for MNIST, FashionMNIST, CIFAR10, CIFAR100, Flower17)')
@@ -89,6 +89,7 @@ def train(student_model, dataloader, dataloader_test, epoch, lr, device):
     opt = torch.optim.SGD(student_model.parameters(), lr=lr, momentum=0.9, weight_decay=5e-4, nesterov=True)
     sch = torch.optim.lr_scheduler.CosineAnnealingLR(opt, T_max=epoch, last_epoch=-1)
 
+    student_model.to(device)
     best_acc = 0
 
     for i in range(epoch):
