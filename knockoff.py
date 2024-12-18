@@ -21,7 +21,7 @@ def main():
     
     parser.add_argument('--window_size', default=16, type=int, 
                         help='window size (mnist,fashion,cifar10:16, flower17:32, cifar100:256)')
-    parser.add_argument('--defense', default=False, type=float, help='use D-ADD defense')
+    parser.add_argument('--defense', default=False, type=bool, help='use D-ADD defense')
     # different model weights may have slightly different threshold
     parser.add_argument('--threshold', default=11.6, type=float,
                         help='distance threshold for D-ADD defense (2247, 650, 11.6, 82.37, 14.85 for MNIST, FashionMNIST, CIFAR10, CIFAR100, Flower17)')
@@ -38,8 +38,8 @@ def main():
     victim_model = BlackBox(args.victim_model, args.target_dataset, defense=args.defense, num_classes=args.num_classes, window_size=args.window_size, device=args.device, threshold=args.threshold)
     surrogate_model = get_model(args.surrogate_model, dataset=args.target_dataset, device=args.device)
     
-    dataloader_sur = get_dataloader(args.surrogate_dataset, dataset_ID=args.target_dataset, train=args.train_set, batch_size=args.window_size, shuffle=True, drop_last=True)
-    dataloader_test = get_dataloader(args.target_dataset, train=False, batch_size=args.window_size, shuffle=False)
+    dataloader_sur = get_dataloader(args.surrogate_dataset, dataset_ID=args.target_dataset, train=args.train_set, batch_size=args.window_size, shuffle=True, drop_last=True, datasets_root=args.data_path)
+    dataloader_test = get_dataloader(args.target_dataset, train=False, batch_size=args.window_size, shuffle=False, datasets_root=args.data_path)
 
     print("Victim model acc:", round(test(victim_model, dataloader_test, args.device), 4))
 

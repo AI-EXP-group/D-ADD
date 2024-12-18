@@ -9,7 +9,7 @@ This repository contains the implementation of **D-ADD**, a detector for defence
 Here is an example for for WRN16_4 and CIFAR10
 
 
-### 1. Train a Clean Model
+### 1. Train Model
 To train a model:
 ```bash
 python train_model.py --model wrn16_4 --dataset cifar10 --epoch 50 --batch_size 256 --lr 0.1 --save_path pretrain/wrn16_4_cifar100.pth --data_path ../datasets --device cuda
@@ -23,11 +23,11 @@ python get_mean_cov.py --model wrn16_4 --dataset cifar10 --num_classes 10 --data
 ```
 
 
-### 3. Calculate Distance
-Calculate the distance of dataset and target dataset:
+### 3. Calculate Distance or Test Benign
+Calculate the distance of dataset and target dataset, test benign accuracy:
 ```bash
-python get_distance.py --model wrn16_4 --dataset cifar10 --target_dataset cifar10 --num_classes 10 --window_size 16 --data_path ../datasets --device cuda
-python get_distance.py --model wrn16_4 --dataset cifar100 --target_dataset cifar10 --num_classes 10 --window_size 16 --data_path ../datasets --device cuda
+python get_distance.py --model wrn16_4 --dataset cifar100 --train_set False --target_dataset cifar10 --num_classes 10 --defense True --threshold 11.6 --window_size 16 --data_path ../datasets --device cuda
+python get_distance.py --model wrn16_4 --dataset stl10 --data_filter '[1, 3, 7]' --target_dataset cifar10 --num_classes 10 --defense True --threshold 11.6 --window_size 16 --data_path ../datasets --device cuda
 ```
 
 

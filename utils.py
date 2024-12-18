@@ -74,14 +74,14 @@ class BlackBox(nn.Module):
 
     def detected_ratio(self):
         if self.defense:
-            return self.detected/self.total
+            return self.detected/self.total if self.total != 0 else 0
         else:
             return 0
 
     def restart(self):
         self.detected = 0
-        self.total = 1
-        self.sliding_window = [[] for _ in range(self.num_classes)]
+        self.total = 0
+        self.window = [[] for _ in range(self.num_classes)]
         self.dis_list = []
 
     def save(self, dataset):
@@ -266,11 +266,10 @@ def get_dataloader(dataset, train=True, batch_size=64, augment=False, shuffle=Tr
             transform=transform)
 
     elif dataset.lower() == 'stl10':
-        # t = 'train' if train else 'test'
-        # data = STL10(datasets_root, split=t, transform=transform)
-        # if filter:
-        #     data = FilteredDataset(data, filter) if dataset == dataset_ID else CustomDataset_STL10(data, filter)
-        data = STL10(datasets_root, split='train+unlabeled', transform=transform)
+        t = 'train' if train else 'test'
+        data = STL10(datasets_root, split=t, transform=transform)
+        if filter:
+            data = FilteredDataset(data, filter, class_map=stl10_to_cifar10_map)
 
     elif dataset.lower() == 'usps':
         data = USPS(datasets_root, train=train, transform=transform)
@@ -288,6 +287,7 @@ def get_dataloader(dataset, train=True, batch_size=64, augment=False, shuffle=Tr
 
 
     return DataLoader(data, batch_size=batch_size, shuffle=shuffle, drop_last=drop_last, pin_memory=True)
+
 
 
 def get_transform(dataset, augment=False):
@@ -316,10 +316,13 @@ def get_transform(dataset, augment=False):
 
     return transforms.Compose([resize, augment, transforms.ToTensor(), normalize])
 
+
+
 class FilteredDataset(Dataset):
-    def __init__(self, dataset, filter_label):
+    def __init__(self, dataset, filter_label, class_map=None):
         self.dataset = dataset
         self.filter_label = filter_label
+        self.class_map = class_map
         self.filtered_indices = [i for i, (_, label) in enumerate(dataset) if label not in filter_label]
 
     def __len__(self):
@@ -328,7 +331,22 @@ class FilteredDataset(Dataset):
     def __getitem__(self, idx):
         original_idx = self.filtered_indices[idx]
         data, label = self.dataset[original_idx]
-        return data, label
+        return data, label if self.class_map == None else self.class_map[label]
+    
+
+stl10_to_cifar10_map = {
+    0: 0,  # airplane
+    1: 2,  # bird
+    2: 1,  # automobile
+    3: 3,  # cat
+    4: 4,  # deer
+    5: 5,  # dog
+    6: 7,  # horse
+    8: 8,  # ship
+    9: 9   # truck
+} # 7 monkey is removed
+
+
 
 def test(model, dataloader, device):
     model.eval()
