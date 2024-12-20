@@ -21,7 +21,7 @@ def main():
                         choices=['lenet', 'conv3', 'wrn16_4', 'res18'])
     parser.add_argument('--dataset', default='cifar100', help='Dataset used to get distance(default: cifar10)',
                         choices=['mnist', 'fashion', 'cifar10', 'cifar100', 'flower17', 'stl10', 'usps', 'indoor67'])
-    parser.add_argument('--data_filter', default=None, type=str_to_list, help='get dataset without these labels (example: [1, 2, 3]).\
+    parser.add_argument('--data_filter', default=None, type=str_to_list, help='get dataset without these labels (example: "[1, 2, 3]").\
         stl10 for cifar10 must filter label 7')
     parser.add_argument('--train_set', default=True, help='use train set or test set')
     parser.add_argument('--target_dataset', default='cifar10', help='Dataset of the model',
