@@ -1,7 +1,7 @@
 # D-ADD: Defense Against Model Stealing Based on Account-Aware Distribution Discrepancy
 
 This repository contains the implementation of **D-ADD**, a detector for defence against model stealing attack.
-
+![image](images\image.jpg)
 ---
 
 ## Getting Started 
